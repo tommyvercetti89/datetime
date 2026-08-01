@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="docTitle">Will you go on a date with me? ❤️</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Flatpickr (Premium Date/Time Picker for localization) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+    
+    <style>
+        :root {
+            --primary: #ff4b2b;
+            --secondary: #ff416c;
+            --bg-start: #ffc3a0;
+            --bg-end: #ffafbd;
+            --text-dark: #333;
+            --text-light: #fff;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Language Switcher */
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            font-weight: 600;
+            color: var(--text-dark);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .lang-switch span {
+            cursor: pointer;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+            padding: 0 5px;
+        }
+        .lang-switch span.active {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        /* Floating Hearts Animation */
+        .hearts-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            transform: rotate(-45deg);
+            animation: float 6s infinite ease-in;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: inherit;
+            border-radius: 50%;
+        }
+        .heart::before { top: -10px; left: 0; }
+        .heart::after { top: 0; left: 10px; }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(-45deg) scale(0.5); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(-45deg) scale(1.2); opacity: 0; }
+        }
+
+        /* Main Container */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(255, 65, 108, 0.2);
+            z-index: 10;
+            position: relative;
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .screen.active {
+            display: block;
+            opacity: 1;
+        }
+
+        h1 {
+            color: var(--text-dark);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        p {
+            color: var(--text-dark);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            height: 100px;
+        }
+
+        button {
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-yes {
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            color: var(--text-light);
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6);
+        }
+
+        .btn-no {
+            background: #fff;
+            color: var(--secondary);
+            padding: 10px 25px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            transition: top 0.15s ease-out, left 0.15s ease-out, transform 0.15s ease-out;
+            z-index: 100; /* Ekranın üstünde uçabilmesi için yüksek z-index */
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-dark);
+            font-size: 1rem;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: var(--secondary);
+        }
+
+        textarea {
+            resize: none;
+            height: 70px;
+        }
+
+        /* Custom Select Styles */
+        .custom-select-container { position: relative; }
+        .custom-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-dark);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        .custom-select:hover { background: rgba(255, 255, 255, 0.8); }
+        .custom-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 5px;
+            z-index: 10;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            flex-direction: column;
+            padding: 5px;
+        }
+        .custom-options.show { display: flex; }
+        .custom-options::-webkit-scrollbar { width: 6px; }
+        .custom-options::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 3px; }
+        .option {
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+        }
+        .option:hover {
+            background: var(--bg-start);
+            color: #fff;
+        }
+
+        .food-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            color: var(--text-light);
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+            margin-top: 10px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6);
+        }
+
+        /* Success screen styling */
+        .success-heart {
+            font-size: 4rem;
+            animation: pulse 1.5s infinite;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .summary-box {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+            border: 1px solid var(--glass-border);
+        }
+        .summary-box p {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .summary-box p:last-child {
+            margin-bottom: 0;
+        }
+        .summary-box strong {
+            color: var(--secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .btn-yes { font-size: 1.2rem; padding: 12px 30px; }
+            .glass-card { padding: 30px 20px; }
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            margin: 20px auto;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="lang-switch">
+        <span id="lang-tr" onclick="setLang('tr')">TR</span> | 
+        <span id="lang-en" class="active" onclick="setLang('en')">EN</span> | 
+        <span id="lang-ua" onclick="setLang('ua')">UA</span>
+    </div>
+
+    <!-- Background Floating Hearts -->
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <div class="glass-card">
+        <!-- Screen 1: Proposal -->
+        <div class="screen active" id="screen1">
+            <h1 id="title1">Will you go on a date with me? ❤️</h1>
+            <p id="sub1">I have something special to ask you.</p>
+            
+            <div class="buttons" id="btnContainer">
+                <button class="btn-yes" id="btnYes">YES ❤️</button>
+                <button class="btn-no" id="btnNo">NO 🙈</button>
+            </div>
+        </div>
+
+        <!-- Screen 2: Success and Form -->
+        <div class="screen" id="screen2">
+            <h1 id="title2">Yaaay! ❤️</h1>
+            <p id="sub2">You just made me the happiest person.</p>
+            
+            <h2 id="formTitle" style="font-size: 1.5rem; margin: 20px 0 15px; color: var(--text-dark);">Let's choose our date!</h2>
+            
+            <form id="dateForm" novalidate>
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="date" id="lblDate">Date:</label>
+                        <input type="date" id="date">
+                        <div class="error-msg" id="errDate" style="display: none; color: #ff0033; font-size: 0.9rem; margin-top: 5px; font-weight: 600;"></div>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="time" id="lblTime">Time:</label>
+                        <input type="time" id="time">
+                        <div class="error-msg" id="errTime" style="display: none; color: #ff0033; font-size: 0.9rem; margin-top: 5px; font-weight: 600;"></div>
+                    </div>
+                </div>
+                <div class="form-group custom-select-container">
+                    <label for="food" id="lblFood">What do you want to eat?</label>
+                    <div class="custom-select" id="foodSelectBtn">
+                        <span id="selectedFoodText" style="display: flex; align-items: center; gap: 10px;">Your favorite food or restaurant</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="custom-options" id="foodOptions">
+                        <div class="option" data-value="İskender"><img src="images/food_iskender_1785580491476.png" class="food-icon" alt="İskender"> İskender</div>
+                        <div class="option" data-value="Pizza"><img src="images/food_pizza_1785580500181.png" class="food-icon" alt="Pizza"> Pizza</div>
+                        <div class="option" data-value="Hamburger"><img src="images/food_hamburger_1785580510141.png" class="food-icon" alt="Hamburger"> Hamburger</div>
+                        <div class="option" data-value="Lahmacun"><img src="images/food_lahmacun_1785580521559.png" class="food-icon" alt="Lahmacun"> Lahmacun</div>
+                        <div class="option" data-value="Döner"><img src="images/food_doner_1785580532815.png" class="food-icon" alt="Döner"> Döner</div>
+                        <div class="option" data-value="Mantı"><img src="images/food_manti_1785580543688.png" class="food-icon" alt="Mantı"> Mantı</div>
+                        <div class="option" data-value="Yaprak Sarması"><img src="images/food_sarma_1785580556257.png" class="food-icon" alt="Sarma"> Yaprak Sarması</div>
+                        <div class="option" data-value="Adana Kebap"><img src="images/food_adana_1785580566536.png" class="food-icon" alt="Adana Kebap"> Adana Kebap</div>
+                        <div class="option" data-value="Köfte"><img src="images/food_kofte_1785580577151.png" class="food-icon" alt="Köfte"> Köfte</div>
+                        <div class="option" data-value="Pide"><img src="images/food_pide_1785580587550.png" class="food-icon" alt="Pide"> Pide</div>
+                    </div>
+                    <input type="hidden" id="food" value="">
+                    <div class="error-msg" id="errFood" style="display: none; color: #ff0033; font-size: 0.9rem; margin-top: 5px; font-weight: 600;"></div>
+                </div>
+                <div class="form-group">
+                    <label for="message" id="lblMsg">Leave a note (Optional):</label>
+                    <textarea id="message" placeholder="Anything else you want to add?"></textarea>
+                </div>
+                
+                <button type="submit" class="btn-submit" id="btnSubmit">Confirm our date</button>
+                <div class="loader" id="loader"></div>
+            </form>
+        </div>
+
+        <!-- Screen 3: Final -->
+        <div class="screen" id="screen3">
+            <div class="success-heart">💖</div>
+            <h1 id="title3">Everything is set!</h1>
+            <p id="sub3" style="margin-bottom: 15px;">Can't wait. See you soon!</p>
+            
+            <div class="summary-box">
+                <p><strong><span id="lblSumDate">Date:</span></strong> <span id="resDate"></span></p>
+                <p><strong><span id="lblSumTime">Time:</span></strong> <span id="resTime"></span></p>
+                <p id="foodRow" style="display: none;"><strong><span id="lblSumFood">Food:</span></strong> <span id="resFood"></span></p>
+                <p id="msgRow" style="display: none;"><strong><span id="lblSumMsg">Note:</span></strong> <span id="resMsg"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- TRANSLATIONS ---
+        const translations = {
+            en: {
+                title1: "Will you go on a date with me? ❤️",
+                sub1: "I have something special to ask you.",
+                btnYes: "YES ❤️",
+                btnNo: "NO 🙈",
+                title2: "Yaaay! ❤️",
+                sub2: "You just made me the happiest person.",
+                formTitle: "Let's choose our date!",
+                lblDate: "Date:",
+                lblTime: "Time:",
+                lblFood: "What do you want to eat?",
+                phFood: "Your favorite food or restaurant",
+                lblMsg: "Leave a note (Optional):",
+                phMsg: "Anything else you want to add? (please use Turkish or English, otherwise I won't understand 😭)",
+                btnSubmit: "Confirm our date",
+                title3: "Everything is set!",
+                sub3: "Can't wait. See you soon!",
+                docTitle: "Will you go on a date with me? ❤️",
+                emailSubj: "New Date Request! ❤️",
+                errMail: "An error occurred while sending. Please try again.",
+                lblSumDate: "Date:",
+                lblSumTime: "Time:",
+                lblSumFood: "Food:",
+                lblSumMsg: "Note:",
+                errRequired: "Please make a choice, otherwise I'll be sad :("
+            },
+            ua: {
+                title1: "Ти підеш зі мною на побачення? ❤️",
+                sub1: "Я маю запитати тебе про дещо особливе.",
+                btnYes: "ТАК ❤️",
+                btnNo: "НІ 🙈",
+                title2: "Ура! ❤️",
+                sub2: "Ти щойно зробила мене найщасливішою людиною.",
+                formTitle: "Давай оберемо дату!",
+                lblDate: "Дата:",
+                lblTime: "Час:",
+                lblFood: "Що б ти хотіла з'їсти?",
+                phFood: "Твоя улюблена їжа або ресторан",
+                lblMsg: "Залиш повідомлення (Необов'язково):",
+                phMsg: "Щось ще хочеш додати? (будь ласка, пиши турецькою або англійською, інакше я не зрозумію 😭)",
+                btnSubmit: "Підтвердити наше побачення",
+                title3: "Все готово!",
+                sub3: "З нетерпінням чекаю. До скорої зустрічі!",
+                docTitle: "Ти підеш зі мною на побачення? ❤️",
+                emailSubj: "Новий запит на побачення! ❤️",
+                errMail: "Виникла помилка. Будь ласка, спробуйте ще раз.",
+                lblSumDate: "Дата:",
+                lblSumTime: "Час:",
+                lblSumFood: "Їжа:",
+                lblSumMsg: "Повідомлення:",
+                errRequired: "Будь ласка, зроби вибір, інакше я засмучуся :("
+            },
+            tr: {
+                title1: "Benimle çıkar mısın? ❤️",
+                sub1: "Sana özel bir şey sormak istiyorum.",
+                btnYes: "EVET ❤️",
+                btnNo: "HAYIR 🙈",
+                title2: "Yuppi! ❤️",
+                sub2: "Beni dünyanın en mutlu insanı yaptın.",
+                formTitle: "Hadi tarihimizi seçelim!",
+                lblDate: "Tarih:",
+                lblTime: "Saat:",
+                lblFood: "Ne yemek istersin?",
+                phFood: "Favori yemeğin veya restoranın",
+                lblMsg: "Not bırak (İsteğe bağlı):",
+                phMsg: "Başka eklemek istediğin bir şey var mı? (lütfen türkçe veya ingilizce yoksa anlamıyorum 😭)",
+                btnSubmit: "Randevumuzu onayla",
+                title3: "Her şey hazır!",
+                sub3: "Sabırsızlanıyorum. Yakında görüşürüz!",
+                docTitle: "Benimle çıkar mısın? ❤️",
+                emailSubj: "Yeni Randevu Talebi! ❤️",
+                errMail: "Gönderilirken bir hata oluştu. Lütfen tekrar dene.",
+                lblSumDate: "Tarih:",
+                lblSumTime: "Saat:",
+                lblSumFood: "Yemek:",
+                lblSumMsg: "Not:",
+                errRequired: "Lütfen seçimini yap yoksa üzülüyorum :("
+            }
+        };
+
+        let currentLang = 'en';
+
+        // Initialize Flatpickr to override native browser UI language
+        let fpDate = flatpickr("#date", {
+            locale: "en",
+            dateFormat: "Y-m-d",
+            minDate: "today"
+        });
+        
+        let fpTime = flatpickr("#time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "h:i K",
+            time_24hr: false
+        });
+
+        function setLang(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+
+            // Update UI
+            document.getElementById('docTitle').innerText = t.docTitle;
+            document.getElementById('title1').innerText = t.title1;
+            document.getElementById('sub1').innerText = t.sub1;
+            document.getElementById('btnYes').innerText = t.btnYes;
+            document.getElementById('btnNo').innerText = t.btnNo;
+            document.getElementById('title2').innerText = t.title2;
+            document.getElementById('sub2').innerText = t.sub2;
+            document.getElementById('formTitle').innerText = t.formTitle;
+            document.getElementById('lblDate').innerText = t.lblDate;
+            document.getElementById('lblTime').innerText = t.lblTime;
+            document.getElementById('lblFood').innerText = t.lblFood;
+            
+            if (document.getElementById('food').value === "") {
+                document.getElementById('selectedFoodText').innerText = t.phFood;
+            }
+            
+            document.getElementById('lblMsg').innerText = t.lblMsg;
+            document.getElementById('message').placeholder = t.phMsg;
+            document.getElementById('btnSubmit').innerText = t.btnSubmit;
+            document.getElementById('title3').innerText = t.title3;
+            document.getElementById('sub3').innerText = t.sub3;
+
+            // Update Validation Error Messages
+            document.getElementById('errDate').innerText = t.errRequired;
+            document.getElementById('errTime').innerText = t.errRequired;
+            document.getElementById('errFood').innerText = t.errRequired;
+
+            // Update Switcher
+            document.getElementById('lang-tr').classList.remove('active');
+            document.getElementById('lang-en').classList.remove('active');
+            document.getElementById('lang-ua').classList.remove('active');
+            document.getElementById(`lang-${lang}`).classList.add('active');
+
+            // Update Summary Labels
+            document.getElementById('lblSumDate').innerText = t.lblSumDate;
+            document.getElementById('lblSumTime').innerText = t.lblSumTime;
+            document.getElementById('lblSumFood').innerText = t.lblSumFood;
+            document.getElementById('lblSumMsg').innerText = t.lblSumMsg;
+
+            // Update Calendar Locale
+            if (fpDate) {
+                let loc = "en";
+                if (lang === 'ua') loc = "uk";
+                if (lang === 'tr') loc = "tr";
+                fpDate.set("locale", loc);
+            }
+        }
+
+        // --- BACKGROUND HEARTS ---
+        const heartsContainer = document.getElementById('heartsContainer');
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's';
+            heart.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            heartsContainer.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 7000);
+        }
+        
+        setInterval(createHeart, 400);
+
+        // --- SCREEN TRANSITION ---
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+                setTimeout(() => screen.style.display = 'none', 500);
+            });
+            
+            const targetScreen = document.getElementById(screenId);
+            setTimeout(() => {
+                targetScreen.style.display = 'block';
+                setTimeout(() => targetScreen.classList.add('active'), 50);
+            }, 500);
+        }
+
+        // --- NO BUTTON LOGIC (WITH COLLISION PREVENTION) ---
+        const btnNo = document.getElementById('btnNo');
+        const btnYes = document.getElementById('btnYes');
+        const btnContainer = document.getElementById('btnContainer');
+
+        let originalLeft, originalTop;
+        let resetTimeout;
+        let isEscaping = false;
+
+        // Initial setup
+        btnNo.style.position = 'absolute';
+        setTimeout(() => {
+            originalLeft = (btnContainer.offsetWidth / 2 + btnYes.offsetWidth / 2 + 20) + 'px';
+            originalTop = '50%';
+            btnNo.style.left = originalLeft;
+            btnNo.style.top = originalTop;
+            btnNo.style.transform = 'translateY(-50%)';
+        }, 100);
+
+        function moveBtnNo(e) {
+            if (e && e.type === 'click') e.preventDefault(); // Tıklamayı engelle
+            clearTimeout(resetTimeout);
+            isEscaping = true;
+
+            const btnRect = btnNo.getBoundingClientRect();
+            const containerRect = btnContainer.getBoundingClientRect();
+            const yesRect = btnYes.getBoundingClientRect();
+
+            // Fare veya dokunma pozisyonunu al
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            if (e && e.clientX !== undefined) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            } else if (e && e.touches && e.touches.length > 0) {
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            }
+
+            let randomX, randomY;
+            let isColliding = true;
+            let attempts = 0;
+
+            while (isColliding && attempts < 100) {
+                // Tüm ekranda (viewport) rastgele bir nokta seç (Kenarlardan 20px içeride)
+                const targetViewportX = Math.random() * (window.innerWidth - btnRect.width - 40) + 20;
+                const targetViewportY = Math.random() * (window.innerHeight - btnRect.height - 40) + 20;
+
+                // Fareden en az 200 piksel uzağa kaçmalı
+                const dx = (targetViewportX + btnRect.width / 2) - mouseX;
+                const dy = (targetViewportY + btnRect.height / 2) - mouseY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                // Evet butonunun üzerine gelmemeli
+                const overlapsYes = (
+                    targetViewportX < yesRect.right + 30 &&
+                    targetViewportX + btnRect.width > yesRect.left - 30 &&
+                    targetViewportY < yesRect.bottom + 30 &&
+                    targetViewportY + btnRect.height > yesRect.top - 30
+                );
+
+                if (distance > 200 && !overlapsYes) {
+                    // Bulunan ekran koordinatını, container'a göreceli (relative) koordinata çevir
+                    randomX = targetViewportX - containerRect.left;
+                    randomY = targetViewportY - containerRect.top;
+                    isColliding = false;
+                }
+                attempts++;
+            }
+
+            // Eğer çok köşeye sıkışırsa (100 denemede bulamazsa) farenin zıttı köşeye ışınla
+            if (isColliding) {
+                const targetViewportX = mouseX > window.innerWidth / 2 ? 20 : window.innerWidth - btnRect.width - 20;
+                const targetViewportY = mouseY > window.innerHeight / 2 ? 20 : window.innerHeight - btnRect.height - 20;
+                randomX = targetViewportX - containerRect.left;
+                randomY = targetViewportY - containerRect.top;
+            }
+
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+            btnNo.style.transform = 'none';
+
+            // 2 Saniye sonra yerine dön
+            resetTimeout = setTimeout(() => {
+                btnNo.style.left = originalLeft;
+                btnNo.style.top = originalTop;
+                btnNo.style.transform = 'translateY(-50%)';
+                isEscaping = false;
+            }, 2000);
+        }
+
+        // 1. Yakınlık Sensörü (Fare butona 120px yaklaşırsa kaçar)
+        document.addEventListener('mousemove', (e) => {
+            if (!document.getElementById('screen1').classList.contains('active')) return;
+            
+            const btnRect = btnNo.getBoundingClientRect();
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
+            
+            const dx = e.clientX - btnCenterX;
+            const dy = e.clientY - btnCenterY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 120) {
+                moveBtnNo(e);
+            }
+        });
+
+        // 2. Diğer tüm dokunma ve tıklama ihtimalleri
+        btnNo.addEventListener('mouseenter', moveBtnNo);
+        btnNo.addEventListener('touchstart', moveBtnNo, {passive: false});
+        btnNo.addEventListener('click', moveBtnNo);
+        btnNo.addEventListener('focus', moveBtnNo);
+
+        // --- YES BUTTON LOGIC ---
+        btnYes.addEventListener('click', () => {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                }));
+                confetti(Object.assign({}, defaults, { particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                }));
+            }, 250);
+
+            showScreen('screen2');
+        });
+
+        // --- CUSTOM SELECT LOGIC ---
+        const foodSelectBtn = document.getElementById('foodSelectBtn');
+        const foodOptions = document.getElementById('foodOptions');
+        const selectedFoodText = document.getElementById('selectedFoodText');
+        const hiddenFoodInput = document.getElementById('food');
+
+        foodSelectBtn.addEventListener('click', (e) => {
+            foodOptions.classList.toggle('show');
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-select-container')) {
+                foodOptions.classList.remove('show');
+            }
+        });
+
+        foodOptions.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', () => {
+                selectedFoodText.innerHTML = option.innerHTML;
+                hiddenFoodInput.value = option.dataset.value; 
+                document.getElementById('errFood').style.display = 'none';
+                foodOptions.classList.remove('show');
+            });
+        });
+
+        // Hide error messages on change
+        document.getElementById('date').addEventListener('change', () => {
+            if(document.getElementById('date').value) document.getElementById('errDate').style.display = 'none';
+        });
+        document.getElementById('time').addEventListener('change', () => {
+            if(document.getElementById('time').value) document.getElementById('errTime').style.display = 'none';
+        });
+
+        // --- FORM SUBMISSION (FormSubmit) ---
+        const dateForm = document.getElementById('dateForm');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const loader = document.getElementById('loader');
+
+        function sendDateRequest(data) {
+            btnSubmit.style.display = 'none';
+            loader.style.display = 'block';
+
+            const t = translations[currentLang];
+
+            fetch("https://formsubmit.co/ajax/that.pointer222@slmails.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    Date: data.date,
+                    Time: data.time,
+                    Food: data.food,
+                    Message: data.message,
+                    Language: currentLang.toUpperCase(),
+                    _subject: t.emailSubj,
+                    _captcha: "false" 
+                })
+            })
+            .then(response => response.json())
+            .then(resData => {
+                document.getElementById('resDate').innerText = data.date;
+                document.getElementById('resTime').innerText = data.time;
+                
+                if(data.food.trim() !== '') {
+                    document.getElementById('resFood').innerText = data.food;
+                    document.getElementById('foodRow').style.display = 'block';
+                } else {
+                    document.getElementById('foodRow').style.display = 'none';
+                }
+
+                if(data.message.trim() !== '') {
+                    document.getElementById('resMsg').innerText = data.message;
+                    document.getElementById('msgRow').style.display = 'block';
+                } else {
+                    document.getElementById('msgRow').style.display = 'none';
+                }
+                showScreen('screen3');
+            })
+            .catch(error => {
+                alert(t.errMail);
+                btnSubmit.style.display = 'block';
+                loader.style.display = 'none';
+            });
+        }
+
+        dateForm.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+            
+            const dateVal = document.getElementById('date').value;
+            const timeVal = document.getElementById('time').value;
+            const foodVal = document.getElementById('food').value;
+            const msgVal = document.getElementById('message').value;
+
+            const t = translations[currentLang];
+            let isValid = true;
+
+            if (!dateVal) {
+                document.getElementById('errDate').innerText = t.errRequired;
+                document.getElementById('errDate').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!timeVal) {
+                document.getElementById('errTime').innerText = t.errRequired;
+                document.getElementById('errTime').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!foodVal) {
+                document.getElementById('errFood').innerText = t.errRequired;
+                document.getElementById('errFood').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            sendDateRequest({
+                date: dateVal,
+                time: timeVal,
+                food: foodVal,
+                message: msgVal
+            });
+        });
+
+    </script>
+</body>
+</html>
