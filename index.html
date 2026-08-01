@@ -14,21 +14,21 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <!-- Flatpickr (Premium Date/Time Picker for localization) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
     
     <style>
         :root {
-            --primary: #ff4b2b;
-            --secondary: #ff416c;
-            --bg-start: #ffc3a0;
-            --bg-end: #ffafbd;
-            --text-dark: #333;
+            --primary: #ff4b4b;
+            --secondary: #ff2a4b;
+            --bg-start: #3b0005;
+            --bg-end: #1a0002;
+            --text-dark: #fce8e8;
             --text-light: #fff;
-            --glass-bg: rgba(255, 255, 255, 0.25);
-            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-bg: rgba(0, 0, 0, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -230,7 +230,7 @@
             padding: 10px 15px;
             border: 1px solid var(--glass-border);
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--text-dark);
             font-size: 1rem;
             outline: none;
@@ -238,7 +238,7 @@
         }
 
         input:focus, textarea:focus {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.15);
             border-color: var(--secondary);
         }
 
@@ -254,7 +254,7 @@
             padding: 12px 15px;
             border: 1px solid var(--glass-border);
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--text-dark);
             font-size: 1rem;
             cursor: pointer;
@@ -263,15 +263,15 @@
             align-items: center;
             transition: background 0.3s;
         }
-        .custom-select:hover { background: rgba(255, 255, 255, 0.8); }
+        .custom-select:hover { background: rgba(255, 255, 255, 0.15); }
         .custom-options {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            background: #fff;
+            background: #2b0005;
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             margin-top: 5px;
             z-index: 10;
             max-height: 200px;
@@ -291,7 +291,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #333;
+            color: var(--text-dark);
         }
         .option:hover {
             background: var(--bg-start);
