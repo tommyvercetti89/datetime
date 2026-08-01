@@ -555,16 +555,14 @@
         let fpDate = flatpickr("#date", {
             locale: "en",
             dateFormat: "Y-m-d",
-            minDate: "today",
-            disableMobile: true
+            minDate: "today"
         });
         
         let fpTime = flatpickr("#time", {
             enableTime: true,
             noCalendar: true,
             dateFormat: "h:i K",
-            time_24hr: false,
-            disableMobile: true
+            time_24hr: false
         });
 
         function setLang(lang) {
